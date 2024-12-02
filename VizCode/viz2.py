@@ -16,25 +16,32 @@ c = []
 print(data.keys())
 
 # Extract x and y values from the JSON data
-for zebra in data.keys():
-    for ts in data[zebra]['timestamp']:
+for animal in data.keys():
+    for ts in data[animal]['timestamp']:
         z.append(float(ts))
-        if 'Zebra' in zebra:
+        if 'Zebra:63d0e8' in animal:
             c.append('green')
-        elif 'Elephant' in zebra:
+        elif 'Zebra:34a602' in animal:
             c.append('yellow')
-        elif 'Lion' in zebra:
+        elif 'Zebra:87145b' in animal:
+            c.append('orange')
+        elif 'Zebra:52da41' in animal:
             c.append('red')
         else:
+            c.append('black')
+        #elif 'Elephant' in animal:
+        #    c.append('yellow')
+        #elif 'Lion' in animal:
+        #    c.append('red')
+        #else:
             #unknown
-            c.append('gray')
+        #    c.append('gray')
         
-    for coord in data[zebra]['gps coordinates']:
+    for coord in data[animal]['gps coordinates']:
         x.append(float(coord[0]))
         y.append(float(coord[1]))
 
-#    print(len(data[zebra]['timestamp']))
-#    print(len(data[zebra]['gps coordinates']))
+
 
 df = pd.DataFrame({
     'xcoord': x,
@@ -47,7 +54,8 @@ df.sort_values('time')
 
 
 
-df_first = df.head(len(df))
+df_first = df[df['color']!='black']
+#df_first = df_first.head(5000)
 
 # Create a simple line plot
 fig = plt.figure()
@@ -56,5 +64,7 @@ ax.scatter(df_first['xcoord'], df_first['ycoord'], df_first['time'], c = df_firs
 ax.set_xlabel('X coord')
 ax.set_ylabel('Y coord')
 ax.set_zlabel('Time')
+
+plt.title("zebra herd movement")
 
 plt.show()

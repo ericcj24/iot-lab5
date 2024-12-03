@@ -35,6 +35,11 @@ def parse_gps_data(file_path : str) -> dict:
     timestamp_pattern = re.compile(r'-- Timestamp: ([\d.]+)')
     location_pattern = re.compile(r'"location": \[([-?\d.]+),([-?\d.]+)\]')
 
+
+    p = r'"oxygen_saturation": \[([-+]?[0-9]*\.?[0-9]+), "heart_rate": (^-?\d+)\]'
+    oxygen_saturation_heart_rate_patter = re.compile(p)
+
+
     # open the *READABLE* simulation log file
     with open(file_path, 'r') as file:
         
@@ -48,13 +53,15 @@ def parse_gps_data(file_path : str) -> dict:
                 current_animal = f"{animal_type}:{animal_id}"
                 
                 # set up attributes reflecting the timestamps and gps coordinates for the distinct animal represented as lists
-                data[current_animal] = {"timestamp": [], "gps coordinates": []}
+                data[current_animal] = {"timestamp": [], "gps coordinates": [], "oxygen_saturation": [], "heart_rate": []}
                 continue
 
             # check for timestamp and location
             if current_animal:
                 timestamp_match = timestamp_pattern.match(line.strip())
                 location_match = location_pattern.match(line.strip())
+
+                oxygen_saturation_heart_rate_match = oxygen_saturation_heart_rate_patter.match(line.strip())
 
                 # if there is a new timestamp, we add it to the list of timestamps for the distinct animal
                 if timestamp_match:
@@ -66,13 +73,19 @@ def parse_gps_data(file_path : str) -> dict:
                     location = (location_match.group(1), location_match.group(2))
                     data[current_animal]["gps coordinates"].append(location)
 
+                elif oxygen_saturation_heart_rate_match:
+                    print(oxygen_saturation_heart_rate_match)
+
+                    data[current_animal]["oxygen_saturation"].append(oxygen_saturation_heart_rate_match.group(1))
+                    data[current_animal]["heart_rate"].append(oxygen_saturation_heart_rate_match.group(2))
+
     return data
 
 # example usage
 
 #TODO fill in your infile and outfile paths
 infile_path = "../Data/simulation_2024_12_2_0_19_46_READABLE.txt"
-outfile_path = "../Data/path"
+outfile_path = "../Data/path1"
 
 # parse the READABLE simulation log
 parsed_data = parse_gps_data(infile_path)

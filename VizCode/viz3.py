@@ -2,6 +2,7 @@ import json
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from scipy.interpolate import make_interp_spline
 import pandas as pd
 import math
 
@@ -15,6 +16,19 @@ z = []
 c = []
 
 print(data.keys())
+
+def compute_cdf(data, num_points=200):
+    # Sort data
+    sorted_data = np.sort(data)
+    # CDF values
+    sorted_data = np.sort(data)
+    unique_data, unique_indices = np.unique(sorted_data, return_index=True)
+    cdf = np.linspace(0, 1, len(sorted_data))[unique_indices]  # Handle duplicates
+    # Interpolate for a smoother curve
+    spline = make_interp_spline(unique_data, cdf, k=3)  # Cubic spline
+    smooth_x = np.linspace(sorted_data.min(), sorted_data.max(), num_points)
+    smooth_y = spline(smooth_x)
+    return smooth_x, smooth_y
 
 # Extract x and y values from the JSON data
 for animal in data.keys():
@@ -55,29 +69,41 @@ df.sort_values('time')
 
 
 
-df_first = df[df['color']=='green']
+green_zebra = df[df['color']=='green']
+yellow_zebra = df[df['color']=='yellow']
+orange_zebra = df[df['color']=='orange']
+red_zebra = df[df['color']=='red']
 #df_first = df_first.head(5000)
 
-result = []
+zebras = [('green', green_zebra), ('yellow', yellow_zebra), ('orange', orange_zebra), ('red', red_zebra)]
+datasets = []
 # calculate speed
-for i in range(0, len(df_first) - 1):
-    row1 = df_first.iloc[i]
-    row2 = df_first.iloc[i + 1]
+for zebra in zebras:
+    data = zebra[1]
+    color = zebra[0]
+    dataset = []
+    for i in range(0, len(data) - 1):
+        row1 = data.iloc[i]
+        row2 = data.iloc[i + 1]
 
-    time_diff = row2['time'] - row1['time']
-    distance = math.sqrt((row2['xcoord'] - row1['xcoord'])**2 + (row2['ycoord'] - row1['ycoord'])**2)
-    speed = round(distance/time_diff, 2)
+        time_diff = row2['time'] - row1['time']
+        distance = math.sqrt((row2['xcoord'] - row1['xcoord'])**2 + (row2['ycoord'] - row1['ycoord'])**2)
+        speed = round(distance/time_diff, 2)
 
-    result.append(speed)
+        dataset.append(speed)
+    datasets.append([f'{color}_Zebra', dataset, color])
 
+plt.figure(figsize=(10, 6))
 
+for label, data, color in datasets:
+    smooth_x, smooth_y = compute_cdf(data)
+    plt.plot(smooth_x, smooth_y, label=label, color=color)
 
-# Create a simple line plot
-fig, ax = plt.subplots(figsize=(8, 4))
-n, bins, patches = ax.hist(result, 500, histtype='step',
-                           cumulative=True, label='Empirical')
+plt.xlabel("Speed (m/s)")
+plt.ylabel("Probability")
+plt.title("CDF of Movement Speed of Zebra Herd")
+plt.legend()
+plt.grid()
 
-
-plt.title("green zebra herd movement")
-
+# Show the plot
 plt.show()

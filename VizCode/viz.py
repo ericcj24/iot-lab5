@@ -84,8 +84,8 @@ def parse_gps_data(file_path : str) -> dict:
 # example usage
 
 #TODO fill in your infile and outfile paths
-infile_path = "../Data/simulation_2024_12_2_0_19_46_READABLE.txt"
-outfile_path = "../Data/path1"
+infile_path = "../Data/simulation_data.txt"
+outfile_path = "../Data/path"
 
 # parse the READABLE simulation log
 parsed_data = parse_gps_data(infile_path)

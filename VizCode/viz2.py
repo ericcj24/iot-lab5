@@ -19,13 +19,13 @@ print(data.keys())
 for animal in data.keys():
     for ts in data[animal]['timestamp']:
         z.append(float(ts))
-        if 'Zebra:63d0e8' in animal:
+        if 'Zebra:44dc78' in animal:
             c.append('green')
-        elif 'Zebra:34a602' in animal:
+        elif 'Zebra:23d306' in animal:
             c.append('yellow')
-        elif 'Zebra:87145b' in animal:
+        elif 'Zebra:da2a6c' in animal:
             c.append('orange')
-        elif 'Zebra:52da41' in animal:
+        elif 'Zebra:123956' in animal:
             c.append('red')
         else:
             c.append('black')

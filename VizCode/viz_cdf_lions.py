@@ -6,7 +6,7 @@ import pandas as pd
 import math
 
 # Load JSON data from a file
-with open('path.json') as f:
+with open('../Data/path.json') as f:
     data = json.load(f)
 
 x = []
@@ -18,14 +18,12 @@ c = []
 for animal in data.keys():
     for ts in data[animal]['timestamp']:
         z.append(float(ts))
-        if 'Lion:efc6b4' in animal:
+        if 'Lion:5a8049' in animal:
             c.append('blue')
-        elif 'Lion:92c9e9' in animal:
+        elif 'Lion:7c0573' in animal:
             c.append('orange')
-        elif 'Lion:a6e0e2' in animal:
+        elif 'Lion:860e77' in animal:
             c.append('green')
-        elif 'Lion:3fa7c8' in animal:
-            c.append('red')
         else:
             c.append('gray')  # unknown
 
@@ -49,13 +47,11 @@ df.sort_values('time', inplace=True)
 blue_lion = df[df['color'] == 'blue']
 orange_lion = df[df['color'] == 'orange']
 green_lion = df[df['color'] == 'green']
-red_lion = df[df['color'] == 'red']
 
 lions = [
     ('blue_Lion', blue_lion, 'blue'),
     ('orange_Lion', orange_lion, 'orange'),
-    ('green_Lion', green_lion, 'green'),
-    ('red_Lion', red_lion, 'red')
+    ('green_Lion', green_lion, 'green')
 ]
 
 datasets = []
